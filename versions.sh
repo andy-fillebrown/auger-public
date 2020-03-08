@@ -1,0 +1,4 @@
+#!/bin/bash
+
+FLAC_VERSION=1.3.2
+OGG_VERSION=1.3.3

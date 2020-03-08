@@ -1,0 +1,9 @@
+
+/.build
+/.build-csound
+/.dist
+/csound*
+/emsdk*
+/flac*
+/libogg*
+/libsndfile*
