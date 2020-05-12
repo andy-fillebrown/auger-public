@@ -76,13 +76,7 @@ emcc -Oz -g0 -s LINKABLE=1 -s ASSERTIONS=0 -DINIT_STATIC_MODULES=1 $CSOUND_SOURC
 # 1024 * 64 = 65536 is 64 KB
 # 65536 * 1024 * 4 is 268435456
 
-# Keep exports in alphabetical order please, to correlate with CsoundObj.js.
-
-
-## First build for WASM/ScriptProcessorNode (async compilation = 1, assertions = 0)
-# emcc -v -Oz -g0 -DINIT_STATIC_MODULES=1 -s WASM=1 -s ASSERTIONS=0 -s "BINARYEN_METHOD='native-wasm'" -s LINKABLE=1 -s RESERVED_FUNCTION_POINTERS=1 -s TOTAL_MEMORY=268435456 -s ALLOW_MEMORY_GROWTH=1 -s NO_EXIT_RUNTIME=1 -s SINGLE_FILE=1 --pre-js $CSOUND_SOURCE_DIR/Emscripten/src/FileList.js -s BINARYEN_ASYNC_COMPILATION=1 -s MODULARIZE=1 -s EXPORT_NAME=\"'libcsound'\" -s EXTRA_EXPORTED_RUNTIME_METHODS='["FS", "ccall", "cwrap", "Pointer_stringify"]' CsoundObj.bc FileList.bc libcsound.a $BUILD_DIR/lib/libsndfile.a $BUILD_DIR/lib/libogg.a $BUILD_DIR/lib/libFLAC.a -o libcsound.js
- 
-## Second build for WASM/AudioWorklet (async compilation = 0, assertions = 0)
+## Build for WASM/AudioWorklet (async compilation = 0, assertions = 0)
 emcc -v -Oz -g0 -DINIT_STATIC_MODULES=1 -s WASM=1 -s ASSERTIONS=0 -s "BINARYEN_METHOD='native-wasm'" -s LINKABLE=1 -s RESERVED_FUNCTION_POINTERS=1 -s TOTAL_MEMORY=268435456 -s ALLOW_MEMORY_GROWTH=1 -s NO_EXIT_RUNTIME=1 -s SINGLE_FILE=1 --pre-js $CSOUND_SOURCE_DIR/Emscripten/src/FileList.js -s BINARYEN_ASYNC_COMPILATION=0 -s MODULARIZE=1 -s EXPORT_NAME=\"'libcsound'\"  -s EXTRA_EXPORTED_RUNTIME_METHODS='["FS", "ccall", "cwrap", "Pointer_stringify"]' CsoundObj.bc FileList.bc libcsound.a $BUILD_DIR/lib/libsndfile.a $BUILD_DIR/lib/libogg.a $BUILD_DIR/lib/libFLAC.a -o libcsound-worklet.js
 
 # echo "AudioWorkletGlobalScope.libcsound = libcsound" >> libcsound.js
@@ -97,10 +91,8 @@ cd .dist
 
 cp $CSOUND_SOURCE_DIR/Emscripten/src/CsoundProcessor.js ./
 cp $CSOUND_SOURCE_DIR/Emscripten/src/CsoundNode.js ./
-# cp $CSOUND_SOURCE_DIR/Emscripten/src/CsoundScriptProcessorNode.js ./
 cp $CSOUND_SOURCE_DIR/Emscripten/src/CsoundObj.js ./
 cp $CSOUND_SOURCE_DIR/Emscripten/src/csound.js ./
-# cp ../.build-csound/libcsound.js ./
 cp ../.build-csound/libcsound-worklet.js ./
 
 # TODO: Figure out why CsoundNode.js, CsoundProcessor.js and libcsound-worklet.js won't compile with Closure.
@@ -112,8 +104,6 @@ cp ./CsoundNode.js ./min
 $CLOSURE_COMPILER ./CsoundObj.js --js_output_file ./min/CsoundObj.js
 # $CLOSURE_COMPILER ./CsoundProcessor.js --js_output_file ./min/CsoundProcessor.js
 cp ./CsoundProcessor.js ./min
-# $CLOSURE_COMPILER ./CsoundScriptProcessorNode.js --js_output_file ./min/CsoundScriptProcessorNode.js
-# $CLOSURE_COMPILER ./libcsound.js --js_output_file ./min/libcsound.js
 # $CLOSURE_COMPILER ./libcsound-worklet.js --js_output_file ./libcsound-worklet.js
 cp ./libcsound-worklet.js ./min
 
